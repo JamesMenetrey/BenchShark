@@ -57,18 +57,19 @@ namespace BenchSharkTests
             // Arrange
             var shark = new BenchShark();
 
-            // Act
-            shark.TaskEvaluated += (sender, args) =>
+            shark.IterationCompleted += (sender, args) =>
             {
                 // Assert
-                Assert.AreEqual(args.Result.AverageElapsedTicks, args.Result.TotalElapsedTicks);
-                Assert.AreEqual(args.Result.AverageExecutionTime, args.Result.TotalExecutionTime);
-                Assert.AreEqual(1, args.Result.IterationsCount);
-                Assert.AreEqual(null, args.Result.Name);
-                Assert.IsTrue(args.Result.WorstExecutionTime >= args.Result.BestExecutionTime);
-                Assert.IsTrue(args.Result.WorstElapsedTicks >= args.Result.BestElapsedTicks);
+                Assert.AreEqual(args.CurrentIteration.AverageElapsedTicks, args.CurrentIteration.TotalElapsedTicks);
+                Assert.AreEqual(args.CurrentIteration.AverageExecutionTime, args.CurrentIteration.TotalExecutionTime);
+                Assert.AreEqual(1, args.CurrentIteration.IterationsCount);
+                Assert.AreEqual(null, args.CurrentIteration.Name);
+                Assert.AreEqual(args.CurrentIteration.WorstExecutionTime, args.CurrentIteration.BestExecutionTime);
+                Assert.AreEqual(args.CurrentIteration.WorstElapsedTicks, args.CurrentIteration.BestElapsedTicks);
             };
-            var result = shark.EvaluateTask(TaskToEvaluate);
+
+            // Act
+            shark.EvaluateTask(TaskToEvaluate);
         }
 
         /// <summary>
@@ -102,27 +103,34 @@ namespace BenchSharkTests
             var shark = new BenchShark();
             var counter = 0;
 
-            // Act
-            shark.TaskEvaluated += (sender, args) =>
+            shark.IterationCompleted += (sender, args) =>
             {
-                // Assert Result
-                Assert.AreEqual(args.Result.AverageElapsedTicks, args.Result.TotalElapsedTicks);
-                Assert.AreEqual(args.Result.AverageExecutionTime, args.Result.TotalExecutionTime);
-                Assert.AreEqual(1, args.Result.IterationsCount);
-                Assert.AreEqual(null, args.Result.Name);
-                Assert.IsTrue(args.Result.WorstExecutionTime >= args.Result.BestExecutionTime);
-                Assert.IsTrue(args.Result.WorstElapsedTicks >= args.Result.BestElapsedTicks);
+                // Assert the current iteration
+                Assert.AreEqual(args.CurrentIteration.AverageElapsedTicks, args.CurrentIteration.TotalElapsedTicks);
+                Assert.AreEqual(args.CurrentIteration.AverageExecutionTime, args.CurrentIteration.TotalExecutionTime);
+                Assert.AreEqual(1, args.CurrentIteration.IterationsCount);
+                Assert.AreEqual(null, args.CurrentIteration.Name);
+                Assert.IsTrue(args.CurrentIteration.WorstExecutionTime >= args.CurrentIteration.BestExecutionTime);
+                Assert.IsTrue(args.CurrentIteration.WorstElapsedTicks >= args.CurrentIteration.BestElapsedTicks);
 
-                // Assert Total Result
-                Assert.AreEqual(++counter, args.TotalResults.IterationsCount);
-                Assert.AreEqual(args.Result.AverageElapsedTicks, args.Result.TotalElapsedTicks);
-                Assert.AreEqual(args.Result.AverageExecutionTime, args.Result.TotalExecutionTime);
-                Assert.AreEqual(1, args.Result.IterationsCount);
-                Assert.AreEqual(null, args.Result.Name);
-                Assert.IsTrue(args.Result.WorstExecutionTime >= args.Result.BestExecutionTime);
-                Assert.IsTrue(args.Result.WorstElapsedTicks >= args.Result.BestElapsedTicks);
+                // Assert the current evaluation
+                Assert.AreEqual(++counter, args.CurrentEvaluation.IterationsCount);
+                Assert.AreEqual(null, args.CurrentEvaluation.Name);
+                // The following is true when more than one iteration is performed
+                if (args.CurrentEvaluation.IterationsCount > 1)
+                {
+                    Assert.IsTrue(args.CurrentEvaluation.AverageElapsedTicks < args.CurrentEvaluation.TotalElapsedTicks);
+                    Assert.IsTrue(args.CurrentEvaluation.AverageExecutionTime < args.CurrentEvaluation.TotalExecutionTime);
+                    Assert.IsTrue(args.CurrentEvaluation.WorstExecutionTime > args.CurrentEvaluation.BestExecutionTime);
+                    Assert.IsTrue(args.CurrentEvaluation.WorstElapsedTicks > args.CurrentEvaluation.BestElapsedTicks);
+                }
             };
-            shark.EvaluateTask(TaskToEvaluate, 10);
+
+            // Act
+            var result = shark.EvaluateTask(TaskToEvaluate, 10);
+
+            // Assert
+            Assert.AreEqual(10, result.IterationsCount);
         }
     }
 }

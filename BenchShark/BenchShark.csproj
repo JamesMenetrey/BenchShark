@@ -42,7 +42,8 @@
     <Compile Include="BenchShark.cs" />
     <Compile Include="BenchSharkResult.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
-    <Compile Include="BenchSharkEventArgs.cs" />
+    <Compile Include="BenchSharkIterationEventArgs.cs" />
+    <Compile Include="BenchSharkEvaluationEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

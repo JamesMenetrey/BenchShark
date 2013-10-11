@@ -24,9 +24,14 @@ namespace Binarysharp.Benchmark
 
         #region Properties
         /// <summary>
-        /// Event fired when an evaluation of a task is performed.
+        /// This event signals when an iteration for a task is completed.
         /// </summary>
-        public event EventHandler<BenchSharkEventArgs> TaskEvaluated;
+        public event EventHandler<BenchSharkIterationEventArgs> IterationCompleted;
+
+        /// <summary>
+        /// This event signals when an evaluation for a task is completed.
+        /// </summary>
+        public event EventHandler<BenchSharkEvaluationEventArgs> EvaluationCompleted;
         #endregion
 
         #region Constructor
@@ -87,16 +92,30 @@ namespace Binarysharp.Benchmark
             return ret;
         }
         #endregion
-        #region OnTaskEvaluated
+        #region OnEvaluationCompleted
         /// <summary>
-        /// Raises the event <see cref="TaskEvaluated"/>.
+        /// Raises the event <see cref="EvaluationCompleted"/>, stating that an evaluation was performed.
         /// </summary>
-        /// <param name="e">The event argument to pass to the event.</param>
-        protected virtual void OnTaskEvaluated(BenchSharkEventArgs e)
+        /// <param name="taskEvaluated">The result of a task fully evaluated.</param>
+        protected virtual void OnEvaluationCompleted(BenchSharkResult taskEvaluated)
         {
-            if (TaskEvaluated != null)
+            if (EvaluationCompleted != null)
             {
-                TaskEvaluated(this, e);
+                EvaluationCompleted(this, new BenchSharkEvaluationEventArgs(taskEvaluated));
+            }
+        }
+        #endregion
+        #region OnIterationCompleted
+        /// <summary>
+        /// Raises the event <see cref="IterationCompleted"/>, stating that an iteration was performed.
+        /// </summary>
+        /// <param name="currentIteration">The current iteration of the evaluation.</param>
+        /// <param name="currentEvaluation">The current running evaluation.</param>
+        protected virtual void OnIterationCompleted(BenchSharkResult currentIteration, BenchSharkResult currentEvaluation)
+        {
+            if (IterationCompleted != null)
+            {
+                IterationCompleted(this, new BenchSharkIterationEventArgs(currentIteration, currentEvaluation));
             }
         }
         #endregion
@@ -123,7 +142,7 @@ namespace Binarysharp.Benchmark
             Tasks.Clear();
         }
         #endregion
-        #region EvaluateAllTasks
+        #region EvaluateStoredTasks
         /// <summary>
         /// Evaluate the performance of all the tasks previously stored.
         /// </summary>
@@ -131,7 +150,16 @@ namespace Binarysharp.Benchmark
         /// <returns>The return value is an array containing the result of the evaluations.</returns>
         public IEnumerable<BenchSharkResult> EvaluateStoredTasks(uint iterations)
         {
-            return Tasks.Select(task => EvaluateTask(task.Key, task.Value, iterations));
+            // Enumerate the tasks to evaluate
+            foreach (var task in Tasks)
+            {
+                // Evaluate the task
+                var result = EvaluateTask(task.Key, task.Value, iterations);
+                // Raise the event for the completed evaluation
+                OnEvaluationCompleted(result);
+                // Return the result in a deferred manner
+                yield return result;
+            }
         }
         #endregion
         #region EvaluateTask
@@ -211,7 +239,7 @@ namespace Binarysharp.Benchmark
                     : allResults.WorstExecutionTime;
 
                 // Raise the event
-                OnTaskEvaluated(new BenchSharkEventArgs(result, allResults));
+                OnIterationCompleted(result, allResults);
             }
 
             // Return the object
