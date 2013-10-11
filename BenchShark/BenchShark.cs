@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+ * BenchShark library
+ * http://www.binarysharp.com/
+ *
+ * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * This library is released under the MIT License.
+ * See the file LICENSE for more information.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -197,7 +206,7 @@ namespace Binarysharp.Benchmark
             task();
 
             // Create the return value
-            var allResults = new BenchSharkResult
+            var evaluation = new BenchSharkResult
             {
                 Name = name
             };
@@ -213,37 +222,17 @@ namespace Binarysharp.Benchmark
                 }
 
                 // Perform the evaluation
-                var result = InternalEvaluateTask(name, task);
+                var iteration = InternalEvaluateTask(name, task);
 
-                // Set the number of iterations
-                allResults.IterationsCount++;
-
-                // Add the execution time/tick
-                allResults.TotalElapsedTicks += result.TotalElapsedTicks;
-                allResults.TotalExecutionTime += result.TotalExecutionTime;
-
-                // Check the best case
-                allResults.BestElapsedTicks = result.BestElapsedTicks < allResults.BestElapsedTicks
-                    ? result.BestElapsedTicks
-                    : allResults.BestElapsedTicks;
-                allResults.BestExecutionTime = result.BestExecutionTime < allResults.BestExecutionTime
-                    ? result.BestExecutionTime
-                    : allResults.BestExecutionTime;
-
-                // Check the worst case
-                allResults.WorstElapsedTicks = result.WorstElapsedTicks > allResults.WorstElapsedTicks
-                    ? result.WorstElapsedTicks
-                    : allResults.WorstElapsedTicks;
-                allResults.WorstExecutionTime = result.WorstExecutionTime > allResults.WorstExecutionTime
-                    ? result.WorstExecutionTime
-                    : allResults.WorstExecutionTime;
+                // Sum the result with the ones already saved
+                evaluation += iteration;
 
                 // Raise the event
-                OnIterationCompleted(result, allResults);
+                OnIterationCompleted(iteration, evaluation);
             }
 
             // Return the object
-            return allResults;
+            return evaluation;
         }
 
         /// <summary>

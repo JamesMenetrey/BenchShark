@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+ * BenchShark library
+ * http://www.binarysharp.com/
+ *
+ * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * This library is released under the MIT License.
+ * See the file LICENSE for more information.
+*/
+using System;
 using System.Linq;
 using Binarysharp.Benchmark;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
