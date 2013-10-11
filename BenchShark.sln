@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchShark", "BenchShark\BenchShark.csproj", "{31AAE60A-4FB9-4768-B8D8-85B3C3BEEF1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchSharkTests", "BenchSharkTests\BenchSharkTests.csproj", "{73565D9C-71B4-4A45-B2A4-25F1FDA2B7EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31AAE60A-4FB9-4768-B8D8-85B3C3BEEF1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31AAE60A-4FB9-4768-B8D8-85B3C3BEEF1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31AAE60A-4FB9-4768-B8D8-85B3C3BEEF1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31AAE60A-4FB9-4768-B8D8-85B3C3BEEF1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73565D9C-71B4-4A45-B2A4-25F1FDA2B7EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73565D9C-71B4-4A45-B2A4-25F1FDA2B7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73565D9C-71B4-4A45-B2A4-25F1FDA2B7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73565D9C-71B4-4A45-B2A4-25F1FDA2B7EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
