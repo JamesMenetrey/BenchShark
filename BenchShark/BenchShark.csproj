@@ -44,6 +44,9 @@
     <Compile Include="BenchSharkTaskAttribute.cs" />
     <Compile Include="BenchSharkIterationEventArgs.cs" />
     <Compile Include="BenchSharkEvaluationEventArgs.cs" />
+    <Compile Include="Internals\EvaluationResult.cs" />
+    <Compile Include="Internals\EvaluationResultCollection.cs" />
+    <Compile Include="Internals\IterationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +54,7 @@
       <Link>BenchShark.licenseheader</Link>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
