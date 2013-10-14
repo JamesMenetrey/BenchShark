@@ -14,8 +14,15 @@ namespace Binarysharp.Benchmark.Internals
     /// <summary>
     /// Provides a strongly typed collection of <see cref="EvaluationResult"/> objects.
     /// </summary>
-    class EvaluationResultCollection
+    public class EvaluationResultCollection
     {
+        #region Fields
+        /// <summary>
+        /// The collection containing the evaluations.
+        /// </summary>
+        internal List<EvaluationResult> EvaluationsList;
+        #endregion
+
         #region Properties
         /// <summary>
         /// The results of the completed evaluations ordered by the fastest speed of execution.
@@ -31,7 +38,13 @@ namespace Binarysharp.Benchmark.Internals
         /// <summary>
         /// The results of the completed evaluations.
         /// </summary>
-        public IEnumerable<EvaluationResult> Evaluations { get; protected set; }
+        public IEnumerable<EvaluationResult> Evaluations
+        {
+            get
+            {
+                return EvaluationsList.AsReadOnly();
+            }
+        }
 
         /// <summary>
         /// The results of the completed evaluations ordered by the slowest speed of execution.
@@ -49,9 +62,20 @@ namespace Binarysharp.Benchmark.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="EvaluationResultCollection"/> class.
         /// </summary>
-        internal EvaluationResultCollection(IEnumerable<EvaluationResult> evaluations)
+        internal EvaluationResultCollection()
         {
-            Evaluations = evaluations;
+            EvaluationsList = new List<EvaluationResult>();
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Adds the result of an evaluation to the collection.
+        /// </summary>
+        /// <param name="result">The result of an evaluation.</param>
+        internal void AddEvaluationResult(EvaluationResult result)
+        {
+            EvaluationsList.Add(result);
         }
         #endregion
     }

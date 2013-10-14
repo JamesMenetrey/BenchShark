@@ -42,8 +42,8 @@
     <Compile Include="BenchShark.cs" />
     <Compile Include="BenchSharkResult.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
-    <Compile Include="BenchSharkIterationEventArgs.cs" />
-    <Compile Include="BenchSharkEvaluationEventArgs.cs" />
+    <Compile Include="Internals\BenchSharkIterationEventArgs.cs" />
+    <Compile Include="Internals\BenchSharkEvaluationEventArgs.cs" />
     <Compile Include="Internals\EvaluationResult.cs" />
     <Compile Include="Internals\EvaluationResultCollection.cs" />
     <Compile Include="Internals\IterationResult.cs" />

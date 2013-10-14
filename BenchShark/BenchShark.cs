@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Binarysharp.Benchmark.Internals;
 
 namespace Binarysharp.Benchmark
 {
@@ -24,6 +25,12 @@ namespace Binarysharp.Benchmark
         /// The number of interval of iteration to perform a memory clean up.
         /// </summary>
         protected uint CleanUpInterval;
+
+        /// <summary>
+        /// Determines whether the evaluation must store the result of each iteration (does not alter the exposed properties).
+        /// If this value is set to <c>true</c>, the evaluation can be memory consuming, depending on the number of iterations.
+        /// </summary>
+        protected bool MustStoreIterations;
 
         /// <summary>
         /// The tasks to evaluate.
@@ -48,10 +55,15 @@ namespace Binarysharp.Benchmark
         /// Initializes a new instance of the class <see cref="BenchShark"/>.
         /// </summary>
         /// <param name="cleanUpInterval">The number of interval of iteration to perform a memory clean up.</param>
-        public BenchShark(uint cleanUpInterval = 1000)
+        /// <param name="mustStoreIterations">
+        /// Determines whether the evaluation must store the result of each iteration (does not alter the exposed properties).
+        /// If this value is set to <c>true</c>, the evaluation can be memory consuming, depending on the number of iterations.
+        /// </param>
+        public BenchShark(uint cleanUpInterval = 1, bool mustStoreIterations = false)
         {
-            CleanUpInterval = cleanUpInterval;
             Tasks = new Dictionary<string, Action>();
+            CleanUpInterval = cleanUpInterval;
+            MustStoreIterations = mustStoreIterations;
         }
         #endregion
 
@@ -70,12 +82,11 @@ namespace Binarysharp.Benchmark
         #endregion
         #region InternalEvaluateTask
         /// <summary>
-        /// Evaluate the performance of the task.
+        /// Evaluates the performance of the task.
         /// </summary>
-        /// <param name="name">The name of the task.</param>
         /// <param name="task">The task to evaluate.</param>
         /// <returns>The return value is the result of the evaluation.</returns>
-        protected BenchSharkResult InternalEvaluateTask(string name, Action task)
+        protected IterationResult InternalEvaluateTask(Action task)
         {
             // Initialize the stopwatch
             var watch = new Stopwatch();
@@ -86,19 +97,8 @@ namespace Binarysharp.Benchmark
             // Stop the evaluation
             watch.Stop();
 
-            // Create the return value
-            var ret = new BenchSharkResult
-            {
-                IterationsCount = 1,
-                Name = name
-            };
-            // Set the evaluated ticks
-            ret.BestElapsedTicks = ret.TotalElapsedTicks = ret.WorstElapsedTicks = watch.ElapsedTicks;
-            // Set the evaluated time
-            ret.BestExecutionTime = ret.TotalExecutionTime = ret.WorstExecutionTime = watch.Elapsed;
-
-            // Return the object
-            return ret;
+            // Create en return the result
+            return new IterationResult(watch.Elapsed, watch.ElapsedTicks);
         }
         #endregion
         #region OnEvaluationCompleted
@@ -106,7 +106,7 @@ namespace Binarysharp.Benchmark
         /// Raises the event <see cref="EvaluationCompleted"/>, stating that an evaluation was performed.
         /// </summary>
         /// <param name="taskEvaluated">The result of a task fully evaluated.</param>
-        protected virtual void OnEvaluationCompleted(BenchSharkResult taskEvaluated)
+        protected virtual void OnEvaluationCompleted(EvaluationResult taskEvaluated)
         {
             if (EvaluationCompleted != null)
             {
@@ -120,7 +120,7 @@ namespace Binarysharp.Benchmark
         /// </summary>
         /// <param name="currentIteration">The current iteration of the evaluation.</param>
         /// <param name="currentEvaluation">The current running evaluation.</param>
-        protected virtual void OnIterationCompleted(BenchSharkResult currentIteration, BenchSharkResult currentEvaluation)
+        protected virtual void OnIterationCompleted(IterationResult currentIteration, EvaluationResult currentEvaluation)
         {
             if (IterationCompleted != null)
             {
@@ -153,44 +153,35 @@ namespace Binarysharp.Benchmark
         #endregion
         #region EvaluateStoredTasks
         /// <summary>
-        /// Evaluate the performance of all the tasks previously stored.
+        /// Evaluates the performance of all the tasks previously stored.
         /// </summary>
         /// <param name="iterations">The number of iterations to evaluate the tasks.</param>
         /// <returns>The return value is an array containing the result of the evaluations.</returns>
-        public IEnumerable<BenchSharkResult> EvaluateStoredTasks(uint iterations)
+        public EvaluationResultCollection EvaluateStoredTasks(uint iterations)
         {
+            // Create the return value
+            var collection = new EvaluationResultCollection();
+
             // Enumerate the tasks to evaluate
             foreach (var task in Tasks)
             {
                 // Evaluate the task
-                var result = EvaluateTask(task.Key, task.Value, iterations);
-                // Raise the event for the completed evaluation
-                OnEvaluationCompleted(result);
-                // Return the result in a deferred manner
-                yield return result;
+                collection.AddEvaluationResult(EvaluateTask(task.Key, task.Value, iterations));
             }
+
+            // Return the collection
+            return collection;
         }
         #endregion
         #region EvaluateTask
         /// <summary>
         /// Evaluate the performance of the task.
         /// </summary>
-        /// <param name="name">The name of the task.</param>
         /// <param name="task">The task to evaluate.</param>
         /// <returns>The return value is the result of the evaluation.</returns>
-        public BenchSharkResult EvaluateTask(string name, Action task)
+        public IterationResult EvaluateTask(Action task)
         {
-            return EvaluateTask(name, task, 1);
-        }
-
-        /// <summary>
-        /// Evaluate the performance of the task.
-        /// </summary>
-        /// <param name="task">The task to evaluate.</param>
-        /// <returns>The return value is the result of the evaluation.</returns>
-        public BenchSharkResult EvaluateTask(Action task)
-        {
-            return EvaluateTask(null, task);
+            return InternalEvaluateTask(task);
         }
 
         /// <summary>
@@ -200,16 +191,13 @@ namespace Binarysharp.Benchmark
         /// <param name="task">The task to evaluate.</param>
         /// <param name="iterations">The number of iterations to evaluate the task.</param>
         /// <returns>The return value is the result of the evaluation.</returns>
-        public BenchSharkResult EvaluateTask(string name, Action task, uint iterations)
+        public EvaluationResult EvaluateTask(string name, Action task, uint iterations)
         {
-            // Execute the task without evaluating in order to run the jit compiler on it
+            // Execute the task the first time to jit the function
             task();
 
             // Create the return value
-            var evaluation = new BenchSharkResult
-            {
-                Name = name
-            };
+            var evaluation = new EvaluationResult(name, MustStoreIterations);
 
             // Perform the evaluation according the number of iterations
             for (var i = 0; i < iterations; i++)
@@ -222,10 +210,10 @@ namespace Binarysharp.Benchmark
                 }
 
                 // Perform the evaluation
-                var iteration = InternalEvaluateTask(name, task);
+                var iteration = InternalEvaluateTask(task);
 
-                // Sum the result with the ones already saved
-                evaluation += iteration;
+                // Add the iteration to the evaluation result
+                evaluation.AddIteration(iteration);
 
                 // Raise the event
                 OnIterationCompleted(iteration, evaluation);
@@ -241,7 +229,7 @@ namespace Binarysharp.Benchmark
         /// <param name="task">The task to evaluate.</param>
         /// <param name="iterations">The number of iterations to evaluate the task.</param>
         /// <returns>The return value is the result of the evaluation.</returns>
-        public BenchSharkResult EvaluateTask(Action task, uint iterations)
+        public EvaluationResult EvaluateTask(Action task, uint iterations)
         {
             return EvaluateTask(null, task, iterations);
         }

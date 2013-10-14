@@ -7,6 +7,7 @@
  * See the file LICENSE for more information.
 */
 using System;
+using System.Linq;
 using Binarysharp.Benchmark;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,20 +19,21 @@ namespace BenchSharkTests
         public readonly Action TaskToEvaluate = () => string.Compare("Hello", "Hello", StringComparison.InvariantCulture);
 
         /// <summary>
-        /// Evaluates an anonymous task with one iteration.
+        /// Evaluates an anonymous task with a simple evaluation.
         /// </summary>
         [TestMethod]
-        public void EvaluateNamedTask_OneIteration()
+        public void EvaluateTask_SimpleEvaluation()
         {
             // Arrange
             var shark = new BenchShark();
-            const string name = "Foo";
 
             // Act
-            var result = shark.EvaluateTask(name, TaskToEvaluate);
+            var result = shark.EvaluateTask(TaskToEvaluate);
 
             // Assert
-            Assert.AreEqual(name, result.Name);
+            Assert.AreNotEqual(0, result.ElapsedTicks);
+            Assert.AreNotEqual(TimeSpan.Zero, result.ExecutionTime);
+            Assert.IsTrue(result.ElapsedTicks > result.ExecutionTime.TotalMilliseconds);
         }
 
         /// <summary>
@@ -41,26 +43,28 @@ namespace BenchSharkTests
         public void EvaluateTask_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark(1, true);
 
             // Act
-            var result = shark.EvaluateTask(TaskToEvaluate);
+            var result = shark.EvaluateTask(TaskToEvaluate, 1);
 
             // Assert
-            Assert.AreEqual(result.AverageElapsedTicks, result.TotalElapsedTicks);
-            Assert.AreEqual(result.AverageExecutionTime, result.TotalExecutionTime);
             Assert.AreEqual(1, result.IterationsCount);
-            Assert.AreEqual(null, result.Name);
-            Assert.IsTrue(result.WorstExecutionTime >= result.BestExecutionTime);
-            Assert.IsTrue(result.WorstElapsedTicks >= result.BestElapsedTicks);
+            Assert.AreEqual(1, result.Iterations.Count());
+            Assert.AreEqual(result.TotalElapsedTicks, result.AverageElapsedTicks);
+            Assert.AreEqual(result.TotalExecutionTime, result.AverageExecutionTime);
+            Assert.AreEqual(result.TotalElapsedTicks, result.BestElapsedTicks);
+            Assert.AreEqual(result.TotalElapsedTicks, result.WorstElapsedTicks);
+            Assert.AreEqual(result.TotalExecutionTime, result.BestExecutionTime);
+            Assert.AreEqual(result.TotalExecutionTime, result.WorstExecutionTime);
         }
 
 
         /// <summary>
-        /// Evaluates an anonymous task with one iteration.
+        /// Evaluates an anonymous task with one iteration using the iteration event.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_OneIteration_WithEvent()
+        public void EvaluateTask_OneIteration_WithIterationEvent()
         {
             // Arrange
             var shark = new BenchShark();
@@ -68,12 +72,21 @@ namespace BenchSharkTests
             shark.IterationCompleted += (sender, args) =>
             {
                 // Assert
-                Assert.AreEqual(args.CurrentIteration.AverageElapsedTicks, args.CurrentIteration.TotalElapsedTicks);
-                Assert.AreEqual(args.CurrentIteration.AverageExecutionTime, args.CurrentIteration.TotalExecutionTime);
-                Assert.AreEqual(1, args.CurrentIteration.IterationsCount);
-                Assert.AreEqual(null, args.CurrentIteration.Name);
-                Assert.AreEqual(args.CurrentIteration.WorstExecutionTime, args.CurrentIteration.BestExecutionTime);
-                Assert.AreEqual(args.CurrentIteration.WorstElapsedTicks, args.CurrentIteration.BestElapsedTicks);
+                Assert.AreNotEqual(0, args.CurrentIteration.ElapsedTicks);
+                Assert.AreNotEqual(TimeSpan.Zero, args.CurrentIteration.ExecutionTime);
+                Assert.IsTrue(args.CurrentIteration.ElapsedTicks > args.CurrentIteration.ExecutionTime.TotalMilliseconds);
+
+                Assert.AreEqual(1, args.CurrentEvaluation.IterationsCount);
+                Assert.AreEqual(1, args.CurrentEvaluation.Iterations.Count());
+                Assert.AreEqual(args.CurrentEvaluation.TotalElapsedTicks, args.CurrentEvaluation.AverageElapsedTicks);
+                Assert.AreEqual(args.CurrentEvaluation.TotalExecutionTime, args.CurrentEvaluation.AverageExecutionTime);
+                Assert.AreEqual(args.CurrentEvaluation.TotalElapsedTicks, args.CurrentEvaluation.BestElapsedTicks);
+                Assert.AreEqual(args.CurrentEvaluation.TotalElapsedTicks, args.CurrentEvaluation.WorstElapsedTicks);
+                Assert.AreEqual(args.CurrentEvaluation.TotalExecutionTime, args.CurrentEvaluation.BestExecutionTime);
+                Assert.AreEqual(args.CurrentEvaluation.TotalExecutionTime, args.CurrentEvaluation.WorstExecutionTime);
+
+                Assert.AreEqual(args.CurrentIteration.ElapsedTicks, args.CurrentEvaluation.TotalElapsedTicks);
+                Assert.AreEqual(args.CurrentIteration.ExecutionTime, args.CurrentEvaluation.TotalExecutionTime);
             };
 
             // Act
@@ -87,25 +100,26 @@ namespace BenchSharkTests
         public void EvaluateTask_TenIterations()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark(1, true);
 
             // Act
             var result = shark.EvaluateTask(TaskToEvaluate, 10);
 
             // Assert
+            Assert.AreEqual(10, result.IterationsCount);
+            Assert.AreEqual(10, result.Iterations.Count());
             Assert.IsTrue(result.AverageElapsedTicks < result.TotalElapsedTicks);
             Assert.IsTrue(result.AverageExecutionTime < result.TotalExecutionTime);
-            Assert.AreEqual(10, result.IterationsCount);
             Assert.AreEqual(null, result.Name);
             Assert.IsTrue(result.WorstExecutionTime > result.BestExecutionTime);
             Assert.IsTrue(result.WorstElapsedTicks > result.BestElapsedTicks);
         }
 
         /// <summary>
-        /// Evaluates an anonymous task with 10 iterations.
+        /// Evaluates an anonymous task with 10 iterations using the iteration event.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_TenIterations_WithEvent()
+        public void EvaluateTask_TenIterations_WithIterationEvent()
         {
             // Arrange
             var shark = new BenchShark();
@@ -114,12 +128,7 @@ namespace BenchSharkTests
             shark.IterationCompleted += (sender, args) =>
             {
                 // Assert the current iteration
-                Assert.AreEqual(args.CurrentIteration.AverageElapsedTicks, args.CurrentIteration.TotalElapsedTicks);
-                Assert.AreEqual(args.CurrentIteration.AverageExecutionTime, args.CurrentIteration.TotalExecutionTime);
-                Assert.AreEqual(1, args.CurrentIteration.IterationsCount);
-                Assert.AreEqual(null, args.CurrentIteration.Name);
-                Assert.IsTrue(args.CurrentIteration.WorstExecutionTime >= args.CurrentIteration.BestExecutionTime);
-                Assert.IsTrue(args.CurrentIteration.WorstElapsedTicks >= args.CurrentIteration.BestElapsedTicks);
+                Assert.IsTrue(args.CurrentIteration.ElapsedTicks > args.CurrentIteration.ExecutionTime.TotalMilliseconds);
 
                 // Assert the current evaluation
                 Assert.AreEqual(++counter, args.CurrentEvaluation.IterationsCount);

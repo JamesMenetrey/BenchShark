@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Binarysharp.Benchmark
+namespace Binarysharp.Benchmark.Internals
 {
     /// <summary>
     /// Represents an event argument when a evaluation is completed.
@@ -20,16 +20,15 @@ namespace Binarysharp.Benchmark
         /// <summary>
         /// The result of a task fully evaluated.
         /// </summary>
-        public BenchSharkResult TaskEvaluated { get; protected set; }
+        public EvaluationResult TaskEvaluated { get; protected set; }
         #endregion
 
         #region Constructor
-
         /// <summary>
         /// Initializes a new instance of the class <see cref="BenchSharkEvaluationEventArgs"/>.
         /// </summary>
         /// <param name="taskEvaluated">The result of a task fully evaluated.</param>
-        public BenchSharkEvaluationEventArgs(BenchSharkResult taskEvaluated)
+        public BenchSharkEvaluationEventArgs(EvaluationResult taskEvaluated)
         {
             TaskEvaluated = taskEvaluated;
         }

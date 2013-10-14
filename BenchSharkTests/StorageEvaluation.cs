@@ -31,17 +31,20 @@ namespace BenchSharkTests
 
             // Act
             shark.AddTask(name, TaskToEvaluate1);
-            var allResults = shark.EvaluateStoredTasks(1).ToArray();
-            var result = allResults.First();
+            var allResults = shark.EvaluateStoredTasks(1);
+            var result = allResults.Evaluations.First();
 
-            // Assert
-            Assert.AreEqual(1, allResults.Count());
+            // Assert collection
+            Assert.AreEqual(1, allResults.Evaluations.Count());
+            CollectionAssert.AreEqual(allResults.FastestEvaluations.ToArray(), allResults.SlowestEvaluations.ToArray());
+
+            // Assert evaluation
             Assert.AreEqual(result.AverageElapsedTicks, result.TotalElapsedTicks);
             Assert.AreEqual(result.AverageExecutionTime, result.TotalExecutionTime);
             Assert.AreEqual(1, result.IterationsCount);
             Assert.AreEqual(name, result.Name);
-            Assert.IsTrue(result.WorstExecutionTime >= result.BestExecutionTime);
-            Assert.IsTrue(result.WorstElapsedTicks >= result.BestElapsedTicks);
+            Assert.IsTrue(result.WorstExecutionTime == result.BestExecutionTime);
+            Assert.IsTrue(result.WorstElapsedTicks == result.BestElapsedTicks);
         }
 
         /// <summary>
@@ -56,11 +59,14 @@ namespace BenchSharkTests
 
             // Act
             shark.AddTask(name, TaskToEvaluate1);
-            var allResults = shark.EvaluateStoredTasks(10).ToArray();
-            var result = allResults.First();
+            var allResults = shark.EvaluateStoredTasks(10);
+            var result = allResults.Evaluations.First();
 
-            // Assert
-            Assert.AreEqual(1, allResults.Count());
+            // Assert collection
+            Assert.AreEqual(1, allResults.Evaluations.Count());
+            CollectionAssert.AreEqual(allResults.FastestEvaluations.ToArray(), allResults.SlowestEvaluations.ToArray());
+
+            // Assert evaluation
             Assert.IsTrue(result.AverageElapsedTicks < result.TotalElapsedTicks);
             Assert.IsTrue(result.AverageExecutionTime < result.TotalExecutionTime);
             Assert.AreEqual(10, result.IterationsCount);
@@ -83,19 +89,22 @@ namespace BenchSharkTests
             // Act
             shark.AddTask(name1, TaskToEvaluate1);
             shark.AddTask(name2, TaskToEvaluate2);
-            var allResults = shark.EvaluateStoredTasks(1).ToArray();
+            var allResults = shark.EvaluateStoredTasks(1);
 
-            // Assert
-            Assert.AreEqual(2, allResults.Count());
-            Assert.AreEqual(name1, allResults[0].Name);
-            Assert.AreEqual(name2, allResults[1].Name);
-            foreach (var result in allResults)
+            // Assert collection
+            Assert.AreEqual(2, allResults.Evaluations.Count());
+            Assert.AreNotEqual(allResults.FastestEvaluations, allResults.SlowestEvaluations);
+
+            // Assert evaluation
+            Assert.AreEqual(name1, allResults.Evaluations.ElementAt(0).Name);
+            Assert.AreEqual(name2, allResults.Evaluations.ElementAt(1).Name);
+            foreach (var result in allResults.Evaluations)
             {
                 Assert.AreEqual(result.AverageElapsedTicks, result.TotalElapsedTicks);
                 Assert.AreEqual(result.AverageExecutionTime, result.TotalExecutionTime);
                 Assert.AreEqual(1, result.IterationsCount);
-                Assert.IsTrue(result.WorstExecutionTime >= result.BestExecutionTime);
-                Assert.IsTrue(result.WorstElapsedTicks >= result.BestElapsedTicks);
+                Assert.IsTrue(result.WorstExecutionTime == result.BestExecutionTime);
+                Assert.IsTrue(result.WorstElapsedTicks == result.BestElapsedTicks);
             }
         }
 
@@ -113,13 +122,16 @@ namespace BenchSharkTests
             // Act
             shark.AddTask(name1, TaskToEvaluate1);
             shark.AddTask(name2, TaskToEvaluate2);
-            var allResults = shark.EvaluateStoredTasks(10).ToArray();
+            var allResults = shark.EvaluateStoredTasks(10);
 
-            // Assert
-            Assert.AreEqual(2, allResults.Count());
-            Assert.AreEqual(name1, allResults[0].Name);
-            Assert.AreEqual(name2, allResults[1].Name);
-            foreach (var result in allResults)
+            // Assert collection
+            Assert.AreEqual(2, allResults.Evaluations.Count());
+            Assert.AreNotEqual(allResults.FastestEvaluations, allResults.SlowestEvaluations);
+
+            // Assert evaluation
+            Assert.AreEqual(name1, allResults.Evaluations.ElementAt(0).Name);
+            Assert.AreEqual(name2, allResults.Evaluations.ElementAt(1).Name);
+            foreach (var result in allResults.Evaluations)
             {
                 Assert.IsTrue(result.AverageElapsedTicks < result.TotalElapsedTicks);
                 Assert.IsTrue(result.AverageExecutionTime < result.TotalExecutionTime);

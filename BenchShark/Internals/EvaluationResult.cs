@@ -115,12 +115,15 @@ namespace Binarysharp.Benchmark.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="EvaluationResult"/> class.
         /// </summary>
+        /// <param name="name">The name of the evaluation.</param>
         /// <param name="mustStoreIterations">
-        /// Determines whether the result must store all the iterations.
+        /// Determines whether the evaluation must store the result of each iteration (does not alter the exposed properties).
         /// If this value is set to <c>true</c>, the evaluation can be memory consuming, depending on the number of iterations.
         /// </param>
-        internal EvaluationResult(bool mustStoreIterations)
+        internal EvaluationResult(string name, bool mustStoreIterations = false)
         {
+            InternalIterations = new List<IterationResult>();
+            Name = name;
             MustStoreIterations = mustStoreIterations;
         }
         #endregion
@@ -131,44 +134,44 @@ namespace Binarysharp.Benchmark.Internals
         /// Adds the iteration to the evaluation result.
         /// </summary>
         /// <param name="iteration">The iteration to add.</param>
-        public void AddIteration(IterationResult iteration)
+        internal void AddIteration(IterationResult iteration)
         {
-            throw new NotImplementedException();
-        }
-        #endregion
-        #region Operators Overloading
-        /// <summary>
-        /// Overloads the addition of two evaluation results. Takes the name of the first evaluation.
-        /// </summary>
-        /// <param name="r1">The first evaluation result.</param>
-        /// <param name="r2">The second evaluation result.</param>
-        /// <returns>A merged evaluation result.</returns>
-        public static BenchSharkResult operator +(EvaluationResult r1, EvaluationResult r2)
-        {
-            return new BenchSharkResult
+            // Store the iteration is the feature is enabled
+            if (MustStoreIterations)
             {
-                // Take the name of the first result
-                Name = r1.Name,
-                // Sum the iteration counts
-                IterationsCount = r1.IterationsCount + r2.IterationsCount,
-                // Sum the tick/time
-                TotalElapsedTicks = r1.IterationsCount + r2.TotalElapsedTicks,
-                TotalExecutionTime = r1.TotalExecutionTime + r2.TotalExecutionTime,
-                // Select the best case
-                BestElapsedTicks = r1.BestElapsedTicks < r2.BestElapsedTicks
-                    ? r1.BestElapsedTicks
-                    : r2.BestElapsedTicks,
-                BestExecutionTime = r1.BestExecutionTime < r2.BestExecutionTime
-                    ? r1.BestExecutionTime
-                    : r2.BestExecutionTime,
-                // Select the worst case
-                WorstElapsedTicks = r1.WorstElapsedTicks > r2.WorstElapsedTicks
-                    ? r1.WorstElapsedTicks
-                    : r2.WorstElapsedTicks,
-                WorstExecutionTime = r1.WorstExecutionTime > r2.WorstExecutionTime
-                    ? r1.WorstExecutionTime
-                    : r2.WorstExecutionTime
-            };
+                InternalIterations.Add(iteration);
+            }
+
+            
+            // Sum the tick/time
+            TotalElapsedTicks += iteration.ElapsedTicks;
+            TotalExecutionTime += iteration.ExecutionTime;
+            // Select the best/worst case
+            // Set the value of the iteration if this is the first one
+            if (IterationsCount == 0)
+            {
+                BestElapsedTicks = iteration.ElapsedTicks;
+                BestExecutionTime = iteration.ExecutionTime;
+                WorstElapsedTicks = iteration.ElapsedTicks;
+                WorstExecutionTime = iteration.ExecutionTime;
+            }
+            else
+            {
+                BestElapsedTicks = iteration.ElapsedTicks < BestElapsedTicks
+                    ? iteration.ElapsedTicks
+                    : BestElapsedTicks;
+                BestExecutionTime = iteration.ExecutionTime < BestExecutionTime
+                    ? iteration.ExecutionTime
+                    : BestExecutionTime;
+                WorstElapsedTicks = iteration.ElapsedTicks > WorstElapsedTicks
+                    ? iteration.ElapsedTicks
+                    : WorstElapsedTicks;
+                WorstExecutionTime = iteration.ExecutionTime > WorstExecutionTime
+                    ? iteration.ExecutionTime
+                    : WorstExecutionTime;
+            }
+            // Increment the number of iteration
+            IterationsCount++;
         }
         #endregion
         #endregion
