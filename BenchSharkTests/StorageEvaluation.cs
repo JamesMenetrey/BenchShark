@@ -140,5 +140,36 @@ namespace BenchSharkTests
                 Assert.IsTrue(result.WorstElapsedTicks > result.BestElapsedTicks);
             }
         }
+
+        /// <summary>
+        /// Evaluates 2 stored task with 10 iterations using the evaluation event.
+        /// </summary>
+        [TestMethod]
+        public void EvaluateTask_TwoTasks_TenIteration_WithEvaluationEvent()
+        {
+            // Arrange
+            var shark = new BenchShark();
+            var names = new[] { "Foo", "Bar" };
+            var counter = 0;
+
+            shark.EvaluationCompleted += (sender, args) =>
+            {
+                Assert.AreEqual(names[counter], args.TaskEvaluated.Name);
+                Assert.IsTrue(args.TaskEvaluated.AverageElapsedTicks < args.TaskEvaluated.TotalElapsedTicks);
+                Assert.IsTrue(args.TaskEvaluated.AverageExecutionTime < args.TaskEvaluated.TotalExecutionTime);
+                Assert.AreEqual(10, args.TaskEvaluated.IterationsCount);
+                Assert.IsTrue(args.TaskEvaluated.WorstExecutionTime > args.TaskEvaluated.BestExecutionTime);
+                Assert.IsTrue(args.TaskEvaluated.WorstElapsedTicks > args.TaskEvaluated.BestElapsedTicks);
+                counter++;
+            };
+
+            // Act
+            shark.AddTask(names[0], TaskToEvaluate1);
+            shark.AddTask(names[1], TaskToEvaluate2);
+            shark.EvaluateStoredTasks(10);
+
+            // Assert
+            Assert.AreEqual(2, counter);
+        }
     }
 }
