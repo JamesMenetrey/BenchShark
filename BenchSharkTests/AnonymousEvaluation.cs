@@ -43,7 +43,7 @@ namespace BenchSharkTests
         public void EvaluateTask_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark(1, true);
+            var shark = new BenchShark(true);
 
             // Act
             var result = shark.EvaluateTask(TaskToEvaluate, 1);
@@ -67,7 +67,7 @@ namespace BenchSharkTests
         public void EvaluateTask_OneIteration_WithIterationEvent()
         {
             // Arrange
-            var shark = new BenchShark(1, true);
+            var shark = new BenchShark(true);
             var passed = false;
 
             shark.IterationCompleted += (sender, args) =>
@@ -105,7 +105,7 @@ namespace BenchSharkTests
         public void EvaluateTask_OneIteration_WithEvaluationEvent()
         {
             // Arrange
-            var shark = new BenchShark(1, true);
+            var shark = new BenchShark(true);
             var passed = false;
 
             shark.EvaluationCompleted += (sender, args) =>
@@ -143,7 +143,7 @@ namespace BenchSharkTests
         public void EvaluateTask_TenIterations()
         {
             // Arrange
-            var shark = new BenchShark(1, true);
+            var shark = new BenchShark(true);
 
             // Act
             var result = shark.EvaluateTask(TaskToEvaluate, 10);

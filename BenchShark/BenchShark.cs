@@ -53,12 +53,12 @@ namespace Binarysharp.Benchmark
         /// <summary>
         /// Initializes a new instance of the class <see cref="BenchShark"/>.
         /// </summary>
-        /// <param name="cleanUpInterval">The number of interval of iteration to perform a memory clean up.</param>
         /// <param name="mustStoreIterations">
         /// Determines whether the evaluation must store the result of each iteration (does not alter the exposed properties).
         /// If this value is set to <c>true</c>, the evaluation can be memory consuming, depending on the number of iterations.
         /// </param>
-        public BenchShark(uint cleanUpInterval = 1, bool mustStoreIterations = false)
+        /// <param name="cleanUpInterval">The number of interval of iteration to perform a memory clean up.</param>
+        public BenchShark(bool mustStoreIterations = false, uint cleanUpInterval = 1)
         {
             Tasks = new Dictionary<string, Action>();
             CleanUpInterval = cleanUpInterval;
