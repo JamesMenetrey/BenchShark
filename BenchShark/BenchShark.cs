@@ -73,10 +73,12 @@ namespace Binarysharp.Benchmark
         /// </summary>
         protected void CleanUpMemory()
         {
-            // Collect all the unused objects
+            // Forces garbage collection
             GC.Collect();
-            // Wait on the objects which are finalizing
+            // Suspends the current thread until the thread that is processing the queue of finalizers has emptied that queue
             GC.WaitForPendingFinalizers();
+            // Forces garbage collection one more time to eliminate finalized objects
+            GC.Collect();
         }
         #endregion
         #region InternalEvaluateTask
