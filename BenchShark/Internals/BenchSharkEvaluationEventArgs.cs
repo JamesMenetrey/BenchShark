@@ -28,7 +28,7 @@ namespace Binarysharp.Benchmark.Internals
         /// Initializes a new instance of the class <see cref="BenchSharkEvaluationEventArgs"/>.
         /// </summary>
         /// <param name="taskEvaluated">The result of a task fully evaluated.</param>
-        public BenchSharkEvaluationEventArgs(EvaluationResult taskEvaluated)
+        internal BenchSharkEvaluationEventArgs(EvaluationResult taskEvaluated)
         {
             TaskEvaluated = taskEvaluated;
         }

@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BenchShark.cs" />
-    <Compile Include="BenchSharkResult.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
     <Compile Include="Internals\BenchSharkIterationEventArgs.cs" />
     <Compile Include="Internals\BenchSharkEvaluationEventArgs.cs" />

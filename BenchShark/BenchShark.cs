@@ -10,7 +10,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Binarysharp.Benchmark.Internals;
 
 namespace Binarysharp.Benchmark
@@ -177,16 +176,6 @@ namespace Binarysharp.Benchmark
         /// <summary>
         /// Evaluate the performance of the task.
         /// </summary>
-        /// <param name="task">The task to evaluate.</param>
-        /// <returns>The return value is the result of the evaluation.</returns>
-        public IterationResult EvaluateTask(Action task)
-        {
-            return InternalEvaluateTask(task);
-        }
-
-        /// <summary>
-        /// Evaluate the performance of the task.
-        /// </summary>
         /// <param name="name">The name of the task.</param>
         /// <param name="task">The task to evaluate.</param>
         /// <param name="iterations">The number of iterations to evaluate the task.</param>
@@ -215,9 +204,12 @@ namespace Binarysharp.Benchmark
                 // Add the iteration to the evaluation result
                 evaluation.AddIteration(iteration);
 
-                // Raise the event
+                // Raise the iteration event
                 OnIterationCompleted(iteration, evaluation);
             }
+
+            // Raise the evaluation event
+            OnEvaluationCompleted(evaluation);
 
             // Return the object
             return evaluation;
