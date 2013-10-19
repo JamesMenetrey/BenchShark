@@ -22,5 +22,16 @@ namespace Binarysharp.Benchmark
         /// </summary>
         public string Name { get; set; }
         #endregion
+
+        #region Constructor
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BenchSharkTaskAttribute"/> class.
+        /// </summary>
+        /// <param name="name">The name of the task.</param>
+        public BenchSharkTaskAttribute(string name)
+        {
+            Name = name;
+        }
+        #endregion
     }
 }
