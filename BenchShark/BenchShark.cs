@@ -88,7 +88,9 @@ namespace Binarysharp.Benchmark
             // Check the process is optimized
             if (!EnableUnoptimizedEvaluations && !OptimizationHelper.IsOptimizedProcess)
             {
-                throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. To remove this exception, set the property EnableUnoptimizedEvaluations to true.");
+                throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. " +
+                    "Do not attach a debugger and compile the program under the Release mode in order to get the best performance. " +
+                    "To remove this exception, set the property EnableUnoptimizedEvaluations to true.");
             }
 
             // Initialize the stopwatch
