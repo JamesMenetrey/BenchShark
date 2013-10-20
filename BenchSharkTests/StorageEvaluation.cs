@@ -26,7 +26,7 @@ namespace BenchSharkTests
         public void EvaluateStoredTasks_OneTask_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark {EnableUnoptimizedEvaluations = true};
             const string name = "Foo";
 
             // Act
@@ -54,7 +54,7 @@ namespace BenchSharkTests
         public void EvaluateStoredTasks_OneTask_TenIteration()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark { EnableUnoptimizedEvaluations = true };
             const string name = "Foo";
 
             // Act
@@ -82,7 +82,7 @@ namespace BenchSharkTests
         public void EvaluateStoredTasks_TwoTasks_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark { EnableUnoptimizedEvaluations = true };
             const string name1 = "Foo";
             const string name2 = "Bar";
 
@@ -115,7 +115,7 @@ namespace BenchSharkTests
         public void EvaluateStoredTasks_TwoTasks_TenIteration()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark { EnableUnoptimizedEvaluations = true };
             const string name1 = "Foo";
             const string name2 = "Bar";
 
@@ -148,7 +148,7 @@ namespace BenchSharkTests
         public void EvaluateStoredTasks_TwoTasks_TenIteration_WithEvaluationEvent()
         {
             // Arrange
-            var shark = new BenchShark();
+            var shark = new BenchShark { EnableUnoptimizedEvaluations = true };
             var names = new[] { "Foo", "Bar" };
             var counter = 0;
 

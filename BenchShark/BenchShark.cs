@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Binarysharp.Benchmark.Helpers;
 using Binarysharp.Benchmark.Internals;
 
 namespace Binarysharp.Benchmark
@@ -49,6 +50,11 @@ namespace Binarysharp.Benchmark
         /// This event signals when an evaluation for a task is completed.
         /// </summary>
         public event EventHandler<BenchSharkEvaluationEventArgs> EvaluationCompleted;
+
+        /// <summary>
+        /// Determines whether the object can run evaluations in debug mode.
+        /// </summary>
+        public bool EnableUnoptimizedEvaluations { get; set; }
         #endregion
 
         #region Constructor
@@ -62,27 +68,15 @@ namespace Binarysharp.Benchmark
         /// <param name="cleanUpInterval">The number of interval of iteration to perform a memory clean up.</param>
         public BenchShark(bool mustStoreIterations = false, uint cleanUpInterval = 1)
         {
+            // Initialize members
             Tasks = new Dictionary<string, Action>();
             CleanUpInterval = cleanUpInterval;
             MustStoreIterations = mustStoreIterations;
+            EnableUnoptimizedEvaluations = false;
         }
         #endregion
 
         #region Protected Methods
-        #region CleanUpMemory
-        /// <summary>
-        /// Cleans up the memory of the current process, avoiding the Garbage Collector to be called afterwards.
-        /// </summary>
-        protected void CleanUpMemory()
-        {
-            // Forces garbage collection
-            GC.Collect();
-            // Suspends the current thread until the thread that is processing the queue of finalizers has emptied that queue
-            GC.WaitForPendingFinalizers();
-            // Forces garbage collection one more time to eliminate finalized objects
-            GC.Collect();
-        }
-        #endregion
         #region InternalEvaluateTask
         /// <summary>
         /// Evaluates the performance of the task.
@@ -91,6 +85,12 @@ namespace Binarysharp.Benchmark
         /// <returns>The return value is the result of the evaluation.</returns>
         protected IterationResult InternalEvaluateTask(Action task)
         {
+            // Check the process is optimized
+            if (!EnableUnoptimizedEvaluations && !OptimizationHelper.IsOptimizedProcess)
+            {
+                throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. To remove this exception, set the property EnableUnoptimizedEvaluations to true.");
+            }
+
             // Initialize the stopwatch
             var watch = new Stopwatch();
             // Start the evaluation of the task
@@ -254,7 +254,7 @@ namespace Binarysharp.Benchmark
                 if (i % CleanUpInterval == 0)
                 {
                     // Clean the memory
-                    CleanUpMemory();
+                    OptimizationHelper.OptimizeMemory();
                 }
 
                 // Perform the evaluation

@@ -77,7 +77,7 @@ namespace BenchSharkTests
         public void EvaluateDecoratedTasks_Obj_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark(true);
+            var shark = new BenchShark(true) {EnableUnoptimizedEvaluations = true};
             SetupEnvironment();
 
             // Act
@@ -98,7 +98,7 @@ namespace BenchSharkTests
         public void EvaluateDecoratedTasks_Type_OneIteration()
         {
             // Arrange
-            var shark = new BenchShark(true);
+            var shark = new BenchShark(true) {EnableUnoptimizedEvaluations = true};
             SetupEnvironment();
 
             // Act
@@ -119,7 +119,7 @@ namespace BenchSharkTests
         public void EvaluateDecoratedTasks_Obj_TenIteration()
         {
             // Arrange
-            var shark = new BenchShark(true);
+            var shark = new BenchShark(true) { EnableUnoptimizedEvaluations = true };
             SetupEnvironment();
 
             // Act
@@ -140,7 +140,7 @@ namespace BenchSharkTests
         public void EvaluateDecoratedTasks_Type_TenIteration()
         {
             // Arrange
-            var shark = new BenchShark(true);
+            var shark = new BenchShark(true) { EnableUnoptimizedEvaluations = true };
             SetupEnvironment();
 
             // Act
