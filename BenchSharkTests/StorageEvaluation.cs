@@ -23,7 +23,7 @@ namespace BenchSharkTests
         /// Evaluates a stored task with one iteration.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_OneTask_OneIteration()
+        public void EvaluateStoredTasks_OneTask_OneIteration()
         {
             // Arrange
             var shark = new BenchShark();
@@ -51,7 +51,7 @@ namespace BenchSharkTests
         /// Evaluates a stored task with ten iteration.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_OneTask_TenIteration()
+        public void EvaluateStoredTasks_OneTask_TenIteration()
         {
             // Arrange
             var shark = new BenchShark();
@@ -79,7 +79,7 @@ namespace BenchSharkTests
         /// Evaluates 2 stored task with one iteration.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_TwoTasks_OneIteration()
+        public void EvaluateStoredTasks_TwoTasks_OneIteration()
         {
             // Arrange
             var shark = new BenchShark();
@@ -112,7 +112,7 @@ namespace BenchSharkTests
         /// Evaluates 2 stored task with 10 iterations.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_TwoTasks_TenIteration()
+        public void EvaluateStoredTasks_TwoTasks_TenIteration()
         {
             // Arrange
             var shark = new BenchShark();
@@ -145,7 +145,7 @@ namespace BenchSharkTests
         /// Evaluates 2 stored task with 10 iterations using the evaluation event.
         /// </summary>
         [TestMethod]
-        public void EvaluateTask_TwoTasks_TenIteration_WithEvaluationEvent()
+        public void EvaluateStoredTasks_TwoTasks_TenIteration_WithEvaluationEvent()
         {
             // Arrange
             var shark = new BenchShark();

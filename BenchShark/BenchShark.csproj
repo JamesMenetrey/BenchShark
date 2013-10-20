@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="BenchShark.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
-    <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Internals\BenchSharkIterationEventArgs.cs" />
     <Compile Include="Internals\BenchSharkEvaluationEventArgs.cs" />
     <Compile Include="Internals\EvaluationResult.cs" />

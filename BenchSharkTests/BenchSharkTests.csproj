@@ -51,9 +51,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AnonymousEvaluation.cs" />
-    <Compile Include="Helpers\ReflectionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageEvaluation.cs" />
+    <Compile Include="ReflectionEvaluationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchShark\BenchShark.csproj">

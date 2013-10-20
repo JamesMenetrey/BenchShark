@@ -10,6 +10,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using Binarysharp.Benchmark.Internals;
 
 namespace Binarysharp.Benchmark
@@ -150,6 +152,61 @@ namespace Binarysharp.Benchmark
         public void ClearTasks()
         {
             Tasks.Clear();
+        }
+        #endregion
+        #region EvaluateDecoratedTasks
+        /// <summary>
+        /// Evaluates the performance of the tasks decorated with the <see cref="BenchSharkTaskAttribute"/> attribute within the given object.
+        /// </summary>
+        /// <param name="obj">The object where the tasks are retrieved.</param>
+        /// <param name="iterations">The number of iterations to evaluate the tasks.</param>
+        /// <returns>The return value is an array containing the result of the evaluations.</returns>
+        public EvaluationResultCollection EvaluateDecoratedTasks(object obj, uint iterations)
+        {
+            // Create the return value
+            var collection = new EvaluationResultCollection();
+
+            // Get the methods of the object that have the BenchShark attribute
+            var tasks = obj.GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .Where(method => method.GetCustomAttributes(typeof(BenchSharkTaskAttribute), false).Length > 0);
+            
+            // Enumerate the tasks to evaluate
+            foreach (var task in tasks)
+            {
+                // Get the name of the task
+                var taskName = task.GetCustomAttribute<BenchSharkTaskAttribute>().Name;
+                // Check that the task doesn't have parameter(s)
+                if (task.GetParameters().Any())
+                {
+                    // Cannot invoke a task with parameter(s)
+                    throw new Exception("Cannot run the task \"" + taskName + "\" because it has parameter(s).");
+                }
+                // Copy the foreach variable to a local variable
+                var localTask = task;
+                // Create the delegate to evaluate the task
+                Action action = () => localTask.Invoke(obj, null);
+                // Evaluate the task
+                collection.AddEvaluationResult(EvaluateTask(taskName, action, iterations));
+            }
+
+            // Return the collection
+            return collection;
+        }
+
+        /// <summary>
+        /// Evaluates the performance of the tasks decorated with the <see cref="BenchSharkTaskAttribute"/> attribute within the given type.
+        /// </summary>
+        /// <typeparam name="T">The type where the methods are retrieved.</typeparam>
+        /// <param name="iterations">The number of iterations to evaluate the tasks.</param>
+        /// <returns>The return value is an array containing the result of the evaluations.</returns>
+        /// <remarks>Calling this method creates a new instance of the given type.</remarks>
+        public EvaluationResultCollection EvaluateDecoratedTasks<T>(uint iterations) where T : new()
+        {
+            // Create a new instance of the class
+            var obj = new T();
+            // Get the tasks by its object
+            return EvaluateDecoratedTasks(obj, iterations);
         }
         #endregion
         #region EvaluateStoredTasks
