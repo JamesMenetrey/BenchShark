@@ -19,24 +19,6 @@ namespace BenchSharkTests
         public readonly Action TaskToEvaluate = () => string.Compare("Hello", "Hello", StringComparison.InvariantCulture);
 
         /// <summary>
-        /// Evaluates an anonymous task with a simple evaluation.
-        /// </summary>
-        [TestMethod]
-        public void EvaluateTask_SimpleEvaluation()
-        {
-            // Arrange
-            var shark = new BenchShark();
-
-            // Act
-            var result = shark.EvaluateTask(TaskToEvaluate, 1);
-
-            // Assert
-            Assert.AreNotEqual(0, result.TotalElapsedTicks);
-            Assert.AreNotEqual(TimeSpan.Zero, result.TotalExecutionTime);
-            Assert.IsTrue(result.TotalElapsedTicks > result.TotalExecutionTime.TotalMilliseconds);
-        }
-
-        /// <summary>
         /// Evaluates an anonymous task with one iteration.
         /// </summary>
         [TestMethod]

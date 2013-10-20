@@ -13,7 +13,9 @@ namespace Binarysharp.Benchmark
 {
     /// <summary>
     /// Represents an attribute that BenchMark can evaluate.
+    /// This attribute can decorate instance and static methods.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
     public class BenchSharkTaskAttribute : Attribute
     {
         #region Properties
