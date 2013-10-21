@@ -85,14 +85,6 @@ namespace Binarysharp.Benchmark
         /// <returns>The return value is the result of the evaluation.</returns>
         protected IterationResult InternalEvaluateTask(Action task)
         {
-            // Check the process is optimized
-            if (!EnableUnoptimizedEvaluations && !OptimizationHelper.IsOptimizedProcess)
-            {
-                throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. " +
-                    "Do not attach a debugger and compile the program under the Release mode in order to get the best performance. " +
-                    "To remove this exception, set the property EnableUnoptimizedEvaluations to true.");
-            }
-
             // Initialize the stopwatch
             var watch = new Stopwatch();
             // Start the evaluation of the task
@@ -243,6 +235,14 @@ namespace Binarysharp.Benchmark
         /// <returns>The return value is the result of the evaluation.</returns>
         public EvaluationResult EvaluateTask(string name, Action task, uint iterations)
         {
+            // Check the process is optimized
+            if (!EnableUnoptimizedEvaluations && !OptimizationHelper.IsOptimizedProcess)
+            {
+                throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. " +
+                    "Do not attach a debugger and compile the program under the Release mode in order to get the best performance. " +
+                    "To remove this exception, set the property EnableUnoptimizedEvaluations to true.");
+            }
+
             // Execute the task the first time to jit the function
             task();
 
