@@ -227,7 +227,7 @@ namespace Binarysharp.Benchmark
         #endregion
         #region EvaluateTask
         /// <summary>
-        /// Evaluate the performance of the task.
+        /// Evaluates the performance of the task.
         /// </summary>
         /// <param name="name">The name of the task.</param>
         /// <param name="task">The task to evaluate.</param>
