@@ -193,14 +193,14 @@ private void SharkOnEvaluationCompleted(object sender, BenchSharkEvaluationEvent
 
 **Performance gatekeeper**
 
-BenchShark does not grant to run benchmarks when the solution is compiled in *Debug* mode or if a debugger is attached to the .NET process, in order to avoid wrong results. This protection can be bypassed by setting the the property `EnableUnoptimizedEvaluations` of the instance of the class `BenchShark` to `false`.
+BenchShark does not grant to run benchmarks when the solution is compiled in *Debug* mode or if a debugger is attached to the .NET process, in order to avoid wrong results. This protection can be bypassed by setting the the property `EnableUnoptimizedEvaluations` of the instance of the class `BenchShark` to `true`.
 
 **Keep all the iterations in memory**
 
 When an evaluation of 1000 iterations is requested, the library does not keep a trace of all of them. It basically sums the total/average and checks for the best/worst performance. Thus, it saves a lot of memory if the application runs several millions of iterations. Nevertheless, the developer can choose to keep all the iterations to make statistics afterwards. This behavior can be overrided by settings the first parameter of the constructor of the class `BenchShark` to `true`. Using the following constructor forces the library to keep all the iterations in memory and querable through the instances of the class `EvaluationResult`.
 
 ```csharp
-// Initialize a new instance of BenchShark and force the evaluations to keep all the iterations in memory
+// Initialize a new instance of BenchShark and force the evaluations to keep all the iterations
 var shark = new BenchShark(true);
 ```
 
