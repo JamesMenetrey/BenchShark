@@ -135,7 +135,7 @@ public class Evaluations
 // [..]
 
 // Evaluate all the tasks in the class with 100 iterations
-var results = shark.EvaluateStoredTasks(100);
+var results = shark.EvaluateStoredTasks<Evaluations>(100);
 ```
 
 ### Using the events ###
