@@ -10,6 +10,8 @@ BenchShark was written in accordance with the best practices exposed by [Eric Li
 
 The benchmark operations are executed through the class `BenchShark`, the entry point of the library.
 
+![](http://binarysharp.com/ccs_files/Products/BenchShark/Class_BenchShark.png)
+
 ### Simplistic evaluations ###
 
 The simplest way to use BenchShark is to create an instance of the main class and call the method `EvaluateTask`.
@@ -54,7 +56,7 @@ var result = shark.EvaluateTask(task, 1000);
 
 This is the content of class `EvaluationResult`.
 
-![](http://binarysharp.com/ccs_files/Products/BenchShark/EvaluationResult.png)
+![](http://binarysharp.com/ccs_files/Products/BenchShark/Class_EvaluationResult.png)
 
 ### Multiple evaluations ###
 
@@ -80,7 +82,7 @@ Console.WriteLine("The best result was {0} in {1} milliseconds / {2} ticks",
 
 This is the content of class `EvaluationResultCollection`.
 
-![](http://binarysharp.com/ccs_files/Products/BenchShark/EvaluationResultCollection.png)
+![](http://binarysharp.com/ccs_files/Products/BenchShark/Class_EvaluationResultCollection.png)
 
 ### Evaluations by reflection ###
 
