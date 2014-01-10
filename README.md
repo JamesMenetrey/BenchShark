@@ -216,8 +216,8 @@ var shark = new BenchShark(false, 100);
 ```
 
 ## Author ##
-This developer and the copyright holder of this library is [ZenLulz (Jämes Ménétrey)](https://github.com/ZenLulz).  
-The official website of BenchShark is [http://www.binarysharp.com](www.binarysharp.com).
+This developer and the copyright holder of this library is [ZenLulz (Jämes Ménétrey)](https://www.github.com/ZenLulz).  
+The official website of BenchShark is [www.binarysharp.com](http://www.binarysharp.com).
 
 ## License ##
 BenchShark is licensed under the MIT License (as of v2.0.0). The license is simple and easy to understand and it places almost no restrictions on what you can do with a project using BenchShark. You are free to use any BenchShark project in any other project (even commercial projects) as long as the copyright header is left intact.
