@@ -60,9 +60,14 @@ namespace Binarysharp.Benchmark
         public bool EnableUnoptimizedEvaluations { get; set; }
 
         /// <summary>
-        /// Gets the object that handles the memory optimization.
+        /// Gets or sets the object that handles the memory optimization.
         /// </summary>
         public IMemoryOptimizer MemoryOptimizerHandler { get; set; }
+
+        /// <summary>
+        /// Gets or sets the object that handles the performance optimization.
+        /// </summary>
+        public IPerformanceOptimizer PerformanceOptimizerHandler { get; set; }
         #endregion
 
         #region Constructor
@@ -84,6 +89,7 @@ namespace Binarysharp.Benchmark
 
             // Define the default handlers
             MemoryOptimizerHandler = new GcMemoryOptimizer();
+            PerformanceOptimizerHandler = new GcPerformanceOptimizer();
         }
         #endregion
 
@@ -96,6 +102,9 @@ namespace Binarysharp.Benchmark
         /// <returns>The return value is the result of the evaluation.</returns>
         protected IterationResult InternalEvaluateTask(Action task)
         {
+            // Enter a section that optimizes the performance of the process during the evaluation
+            PerformanceOptimizerHandler.EnterOptimizedSection();
+
             // Initialize the stopwatch
             var watch = new Stopwatch();
             // Start the evaluation of the task
@@ -104,6 +113,9 @@ namespace Binarysharp.Benchmark
             task();
             // Stop the evaluation
             watch.Stop();
+
+            // Leave the section that optimized the performance of the current process
+            PerformanceOptimizerHandler.LeaveOptimizedSection();
 
             // Create en return the result
             return new IterationResult(watch.Elapsed, watch.ElapsedTicks);

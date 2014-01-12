@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="BenchShark.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
+    <Compile Include="Components\GcPerformanceOptimizer.cs" />
+    <Compile Include="Components\IPerformanceOptimizer.cs" />
     <Compile Include="Results\IterationEventArgs.cs" />
     <Compile Include="Results\EvaluationEventArgs.cs" />
     <Compile Include="Results\EvaluationResult.cs" />
