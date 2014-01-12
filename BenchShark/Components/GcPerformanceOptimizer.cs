@@ -15,11 +15,34 @@ namespace Binarysharp.Benchmark.Components
     /// </summary>
     public class GcPerformanceOptimizer : IPerformanceOptimizer
     {
+        #region Protected Fields
         /// <summary>
         /// The latency mode of the Garbage Collector before this object alterates it.
         /// </summary>
         protected GCLatencyMode OldGcLatencyMode;
 
+        /// <summary>
+        /// Defines whether the section is activated.
+        /// </summary>
+        protected bool IsSectionActivated;
+        #endregion
+
+        #region Destructor
+        /// <summary>
+        /// Frees resources and performs other cleanup operations before it is reclaimed by garbage collection. 
+        /// </summary>
+        ~GcPerformanceOptimizer()
+        {
+            // If the section was activated but never released
+            if (IsSectionActivated)
+            {
+                // Leave the section
+                LeaveOptimizedSection();
+            }
+        }
+        #endregion
+
+        #region Implementation of IPerformanceOptimizer
         /// <summary>
         /// Enters a section during which the performance of the current process is optimized.
         /// </summary>
@@ -28,6 +51,9 @@ namespace Binarysharp.Benchmark.Components
         /// </remarks>
         public void EnterOptimizedSection()
         {
+            // Flag the section as activated
+            IsSectionActivated = true;
+
             // Store the current latency mode of the Garbage Collector
             OldGcLatencyMode = GCSettings.LatencyMode;
 
@@ -40,8 +66,12 @@ namespace Binarysharp.Benchmark.Components
         /// </summary>
         public void LeaveOptimizedSection()
         {
+            // Flag the section as disabled
+            IsSectionActivated = false;
+
             // Restores the old latency mode of the Garbage Collector.
             GCSettings.LatencyMode = OldGcLatencyMode;
         }
+        #endregion
     }
 }
