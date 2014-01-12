@@ -42,13 +42,15 @@
   <ItemGroup>
     <Compile Include="BenchShark.cs" />
     <Compile Include="BenchSharkTaskAttribute.cs" />
-    <Compile Include="Helpers\OptimizationHelper.cs" />
-    <Compile Include="Internals\BenchSharkIterationEventArgs.cs" />
-    <Compile Include="Internals\BenchSharkEvaluationEventArgs.cs" />
-    <Compile Include="Internals\EvaluationResult.cs" />
-    <Compile Include="Internals\EvaluationResultCollection.cs" />
-    <Compile Include="Internals\IterationResult.cs" />
+    <Compile Include="Results\IterationEventArgs.cs" />
+    <Compile Include="Results\EvaluationEventArgs.cs" />
+    <Compile Include="Results\EvaluationResult.cs" />
+    <Compile Include="Results\EvaluationResultCollection.cs" />
+    <Compile Include="Results\IterationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Helpers\DebugHelper.cs" />
+    <Compile Include="Components\GcMemoryOptimizer.cs" />
+    <Compile Include="Components\IMemoryOptimizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BenchShark.licenseheader">

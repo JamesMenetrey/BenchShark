@@ -2,11 +2,10 @@
  * BenchShark library
  * http://www.binarysharp.com/
  *
- * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * Copyright (C) 2013-2014 Jämes Ménétrey (a.k.a. ZenLulz).
  * This library is released under the MIT License.
  * See the file LICENSE for more information.
 */
-
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -40,5 +39,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]

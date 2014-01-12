@@ -2,19 +2,18 @@
  * BenchShark library
  * http://www.binarysharp.com/
  *
- * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * Copyright (C) 2013-2014 Jämes Ménétrey (a.k.a. ZenLulz).
  * This library is released under the MIT License.
  * See the file LICENSE for more information.
 */
-
 using System;
 
-namespace Binarysharp.Benchmark.Internals
+namespace Binarysharp.Benchmark.Results
 {
     /// <summary>
     /// Represents an event argument when a evaluation is completed.
     /// </summary>
-    public class BenchSharkEvaluationEventArgs : EventArgs
+    public class EvaluationEventArgs : EventArgs
     {
         #region Properties
         /// <summary>
@@ -25,10 +24,10 @@ namespace Binarysharp.Benchmark.Internals
 
         #region Constructor
         /// <summary>
-        /// Initializes a new instance of the class <see cref="BenchSharkEvaluationEventArgs"/>.
+        /// Initializes a new instance of the class <see cref="EvaluationEventArgs"/>.
         /// </summary>
         /// <param name="taskEvaluated">The result of a task fully evaluated.</param>
-        internal BenchSharkEvaluationEventArgs(EvaluationResult taskEvaluated)
+        internal EvaluationEventArgs(EvaluationResult taskEvaluated)
         {
             TaskEvaluated = taskEvaluated;
         }

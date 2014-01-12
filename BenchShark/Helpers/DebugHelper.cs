@@ -2,19 +2,18 @@
  * BenchShark library
  * http://www.binarysharp.com/
  *
- * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * Copyright (C) 2013-2014 Jämes Ménétrey (a.k.a. ZenLulz).
  * This library is released under the MIT License.
  * See the file LICENSE for more information.
 */
-using System;
 using System.Diagnostics;
 
 namespace Binarysharp.Benchmark.Helpers
 {
     /// <summary>
-    /// Provides useful functioons related to optimize the process.
+    /// Provides static methods related to debugging.
     /// </summary>
-    public static class OptimizationHelper
+    public static class DebuggingHelper
     {
         #region IsBeingDebugged
         /// <summary>
@@ -59,19 +58,5 @@ namespace Binarysharp.Benchmark.Helpers
         }
         #endregion
 
-        #region OptimizeMemory
-        /// <summary>
-        /// Optimizes the memory of the current process, avoiding the Garbage Collector to be called afterwards.
-        /// </summary>
-        public static void OptimizeMemory()
-        {
-            // Forces garbage collection
-            GC.Collect();
-            // Suspends the current thread until the thread that is processing the queue of finalizers has emptied that queue
-            GC.WaitForPendingFinalizers();
-            // Forces garbage collection one more time to eliminate finalized objects
-            GC.Collect();
-        }
-        #endregion
     }
 }

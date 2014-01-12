@@ -2,7 +2,7 @@
  * BenchShark library
  * http://www.binarysharp.com/
  *
- * Copyright (C) 2013 Jämes Ménétrey (a.k.a. ZenLulz).
+ * Copyright (C) 2013-2014 Jämes Ménétrey (a.k.a. ZenLulz).
  * This library is released under the MIT License.
  * See the file LICENSE for more information.
 */
@@ -12,8 +12,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Binarysharp.Benchmark.Components;
 using Binarysharp.Benchmark.Helpers;
-using Binarysharp.Benchmark.Internals;
+using Binarysharp.Benchmark.Results;
 
 namespace Binarysharp.Benchmark
 {
@@ -40,21 +41,28 @@ namespace Binarysharp.Benchmark
         protected Dictionary<string, Action> Tasks { get; set; }
         #endregion
 
-        #region Properties
-        /// <summary>
-        /// This event signals when an iteration for a task is completed.
-        /// </summary>
-        public event EventHandler<BenchSharkIterationEventArgs> IterationCompleted;
-
+        #region Events
         /// <summary>
         /// This event signals when an evaluation for a task is completed.
         /// </summary>
-        public event EventHandler<BenchSharkEvaluationEventArgs> EvaluationCompleted;
+        public event EventHandler<EvaluationEventArgs> EvaluationCompleted;
 
         /// <summary>
-        /// Determines whether the object can run evaluations in debug mode.
+        /// This event signals when an iteration for a task is completed.
+        /// </summary>
+        public event EventHandler<IterationEventArgs> IterationCompleted;
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Gets a value that indicates whether the object can run evaluations in debug mode.
         /// </summary>
         public bool EnableUnoptimizedEvaluations { get; set; }
+
+        /// <summary>
+        /// Gets the object that handles the memory optimization.
+        /// </summary>
+        public IMemoryOptimizer MemoryOptimizerHandler { get; set; }
         #endregion
 
         #region Constructor
@@ -73,6 +81,9 @@ namespace Binarysharp.Benchmark
             CleanUpInterval = cleanUpInterval;
             MustStoreIterations = mustStoreIterations;
             EnableUnoptimizedEvaluations = false;
+
+            // Define the default handlers
+            MemoryOptimizerHandler = new GcMemoryOptimizer();
         }
         #endregion
 
@@ -107,7 +118,7 @@ namespace Binarysharp.Benchmark
         {
             if (EvaluationCompleted != null)
             {
-                EvaluationCompleted(this, new BenchSharkEvaluationEventArgs(taskEvaluated));
+                EvaluationCompleted(this, new EvaluationEventArgs(taskEvaluated));
             }
         }
         #endregion
@@ -121,7 +132,7 @@ namespace Binarysharp.Benchmark
         {
             if (IterationCompleted != null)
             {
-                IterationCompleted(this, new BenchSharkIterationEventArgs(currentIteration, currentEvaluation));
+                IterationCompleted(this, new IterationEventArgs(currentIteration, currentEvaluation));
             }
         }
         #endregion
@@ -236,7 +247,7 @@ namespace Binarysharp.Benchmark
         public EvaluationResult EvaluateTask(string name, Action task, uint iterations)
         {
             // Check the process is optimized
-            if (!EnableUnoptimizedEvaluations && !OptimizationHelper.IsOptimizedProcess)
+            if (!EnableUnoptimizedEvaluations && !DebuggingHelper.IsOptimizedProcess)
             {
                 throw new Exception("Cannot perform benchmark tests because the process is not running under an optimized state. " +
                     "Do not attach a debugger and compile the program under the Release mode in order to get the best performance. " +
@@ -256,7 +267,7 @@ namespace Binarysharp.Benchmark
                 if (i % CleanUpInterval == 0)
                 {
                     // Clean the memory
-                    OptimizationHelper.OptimizeMemory();
+                    MemoryOptimizerHandler.OptimizeMemory();
                 }
 
                 // Perform the evaluation
